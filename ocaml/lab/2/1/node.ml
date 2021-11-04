@@ -1,3 +1,5 @@
+open Printf
+
 (* label is the identifier for a node *)
 (* `adjacents` is a list of pairs of `'a node` and `'a`, where `'a` is the type of the edge with `'a node`. *)
 (* A node can be linked to another one multiple times as long as it's a different type of edge, aka a different 'a *)
@@ -30,14 +32,15 @@ let addAdjacent this new_adjacent t=
                 {label = l; adjacents = (new_adjacent, t :: rs) :: f_ads}
             | _ -> this
 
-let rec print_all this =
-    open Printf;
+let print this t_to_string =
     match this with
     | {label = l; adjacents = ads} ->
-        printf "%s \n";
+        printf "node label = %s \n" l;
         let f x =
             match x with
-            | {label = x_l; adjacents = _} -> printf "label = %s"
-        in
-
-        List.iter f 
+            | ({label = x_l; adjacents = _}, ts) ->
+                let f_fold s t=
+                    s ^ t_to_string t in
+                let ts_string = List.fold_left f_fold "" ts in
+                printf "adjacent node label = %s with %s relation\n" x_l ts_string ; in
+        List.iter f ads ;
