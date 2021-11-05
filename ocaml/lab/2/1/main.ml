@@ -27,6 +27,7 @@ let () =
 
     printf "After addAdjacent\n" ;
     graph := Graph.addEdge !graph zhifan simone Graph.Friendship ;
+    Graph.print_graph !graph ;
 (*     graph := Graph.addNode !graph !masicci ; *)
 (*     graph := Graph.addNode !graph !dovgayniuk ; *)
 (*     graph := Graph.addNode !graph !maggio ; *)
