@@ -4,32 +4,46 @@ module Graph =
     struct
         type relationship = Friendship | Kinship | Financial | Dislike
         | Sexual | Beliefs | Knowledge | Prestige
-
-        type graph = Graph of relationship Node.node list
         type node = Node of string
+        type edge = Edge of (relationship * node list)
+        type graph = Graph of (node * edge list) list
 
-        let create nodes =
-            Graph nodes
+        let create_node l =
+            Node l
+
+        let create =
+            Graph []
 
         let addNode graph new_node =
             match graph with
-            | Graph nodes ->
-                match List.find (fun x -> x = new_node) nodes with
-                | exception Not_found ->
-                    Graph (new_node :: nodes)
-                | _ -> Graph nodes
+            | Graph l ->
+                match List.find (fun x -> fst x = new_node) l with
+                | exception Not_found -> Graph ((new_node, []) :: l)
+                | _ -> graph
 
-        let addRelationship this_graph this_node other_node tp =
+        let partitionNodes p this_graph =
             match this_graph with
             | Graph l ->
-                let f x =
-                    x = this_node in
-                match List.find f l with
-                | exception Not_found -> failwith "This node is not in the graph"
-                | f_node -> Node.addAdjacent f_node other_node tp
+                List.partition p l
 
-        let print this =
-            printf "Printing graph\n" ;
+        let partitionEdges p this_edges =
+            List.partition p this_edges
+
+        let addEdge this_graph src_node dst_node rel =
+            (* Adds and edge with `rel` relationship between src_node and dst_node
+               (and viceversa) if they are both in the graph *)
+            match (partitionNodes (fun x -> fst x = src_node) this_graph) with
+            | ([],_) -> this_graph
+            | ([src], other_nodes) ->
+                let src_edges = snd src in
+                let other_edges = List.map (fun x -> snd x) other_nodes in
+                match (partitionEdges (fun x -> match x with | Edge t -> fst t = rel) src_edges) with
+                | ([Edge (_, src_adjacents)], src_other_edges)-> 
+                    let src_new_edge = Edge (rel, dst_node :: src_adjacents) in
+                    Graph (((src_node), src_new_edge :: src_other_edges) :: other_nodes)
+                | _ -> failwith "Same relationship multiple times in src_node"
+
+        let print_edge edge =
             let f x =
                 match x with
                 | Friendship -> "Friendship"
@@ -40,9 +54,20 @@ module Graph =
                 | Beliefs -> "Beliefs"
                 | Knowledge-> "Knowledge"
                 | Prestige -> "Prestige" in
-            match this with
+            match edge with
+            | Edge (y_rel, y_adjacents) ->
+            printf "Relationship: %s, Nodes: [%s]" (f y_rel)
+                (List.fold_left (fun a b -> match b with | Node s -> a ^ "," ^ s) "" y_adjacents)
+
+        let print_node node =
+            match node with
+            | Node s -> printf "Node: '%s'\n" s
+
+        let print_graph this_graph =
+            match this_graph with
             | Graph nodes ->
                 let p x =
-                    Node.print x f in
-                List.iter p nodes
+                    print_node (fst x) ;
+                    List.iter print_edge (snd x) in
+                List.iter p nodes ;
     end
