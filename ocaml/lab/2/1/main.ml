@@ -1,39 +1,42 @@
 open Graph
 open Printf
 
+let zhifan     = (Graph.create_node "Zhifan") let simone     = (Graph.create_node "Simone")
+let fipippo    = (Graph.create_node "Filippo")
+let masicci    = (Graph.create_node "Sici")
+let dovgayniuk = (Graph.create_node "Rostic")
+let maggio     = (Graph.create_node "Maggio")
+let luca       = (Graph.create_node "Luca")
+
+let friends = [zhifan; simone; fipippo; masicci; dovgayniuk; maggio; luca]
+
+let graph = ref Graph.create
+
+
 let () =
     print_string "Begin\n" ;
-    let zhifan     = (Graph.create_node "Zhifan") in
-    let simone     = (Graph.create_node "Simone") in
-    let fipippo    = (Graph.create_node "Filippo") in
-    let masicci    = (Graph.create_node "Sici") in
-    let dovgayniuk = (Graph.create_node "Rostic") in
-    let maggio     = (Graph.create_node "Maggio") in
-    let luca       = (Graph.create_node "Luca") in
 
-    (* let graph = ref (Graph.create ([!zhifan; !simone; !fipippo])) in *)
-    let graph = ref Graph.create in
-(*     let Node.addAdjacent !zhifan !simone Friendship ; *)
-
-(*     zhifan := Graph.addRelationship !graph !zhifan !simone Friendship ; *)
-
-    printf "After created\n" ;
+    printf "======== CREATED ========\n\n" ;
     Graph.print_graph !graph ;
 
-    printf "After addNode\n" ;
+    printf "\n\n======== ADD ALL NODES ========\n" ;
+    List.iter (fun friend -> (graph := Graph.addNode !graph friend); ()) friends ;
     graph    := Graph.addNode !graph zhifan ;
     graph    := Graph.addNode !graph simone ;
     Graph.print_graph !graph ;
 
-    printf "After addAdjacent\n" ;
-    graph := Graph.addEdge !graph zhifan simone Graph.Friendship ;
-    Graph.print_graph !graph ;
-(*     graph := Graph.addNode !graph !masicci ; *)
-(*     graph := Graph.addNode !graph !dovgayniuk ; *)
-(*     graph := Graph.addNode !graph !maggio ; *)
-(*     graph := Graph.addNode !graph !luca ; *)
+    printf "\n\n======== ADD REDUNDANT ========\n" ;
+    graph := Graph.addEdge !graph zhifan simone     Graph.Friendship ;
+    graph := Graph.addEdge !graph zhifan simone     Graph.Kinship    ;
+    graph := Graph.addEdge !graph zhifan maggio     Graph.Dislike;
+    graph := Graph.addEdge !graph zhifan masicci    Graph.Kinship    ;
+    graph := Graph.addEdge !graph zhifan fipippo    Graph.Kinship    ;
+    graph := Graph.addEdge !graph zhifan dovgayniuk Graph.Kinship    ;
+    graph := Graph.addEdge !graph zhifan maggio     Graph.Kinship    ;
+    graph := Graph.addEdge !graph zhifan fipippo    Graph.Kinship    ;
+    graph := Graph.addEdge !graph zhifan masicci    Graph.Kinship    ;
+    graph := Graph.addEdge !graph zhifan luca       Graph.Kinship    ;
 
-(*     printf "After addNode\n" ; *)
-(*     Graph.print !graph ; *)
+    Graph.print_graph !graph ;
 
     print_string "End\n" ;
