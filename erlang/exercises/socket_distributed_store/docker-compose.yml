@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  server_1:
+    image: myerlang:latest
+    volumes:
+      - .:/app
+  server_2:
+    image: myerlang:latest
+    volumes:
+      - .:/app
