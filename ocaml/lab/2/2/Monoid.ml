@@ -1,0 +1,1 @@
+(* A monoid is an algebraic structure consisting of a set together with a single associative binary operation and an identity element. E.g., the set of booleans with the or operator is a monoid whose identity is false. *)
